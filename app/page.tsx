@@ -204,37 +204,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
-          title="Principal Out"
-          value={`₹${stats?.totalPrincipal?.toLocaleString() || '0'}`}
-          icon={<BadgeIndianRupee className="text-primary" />}
-          trend="+4.2%"
-          loading={loading}
-        />
-        <StatsCard
-          title="Active Loans"
-          value={stats?.activeLoansCount?.toString() || '0'}
-          icon={<TrendingUp className="text-emerald-500" />}
-          trend="Live"
-          loading={loading}
-        />
-        <StatsCard
-          title="Interest Yield"
-          value={`₹${stats?.totalInterest?.toLocaleString() || '0'}`}
-          icon={<TrendingUp className="text-primary" />}
-          trend="Monthly"
-          loading={loading}
-        />
-        <StatsCard
-          title="Historical"
-          value={stats?.completedLoansCount?.toString() || '0'}
-          icon={<CheckCircle className="text-primary" />}
-          trend="Settled"
-          loading={loading}
-        />
-      </div>
+
 
       {/* Main Content Area */}
       <div className="w-full space-y-8">
