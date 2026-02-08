@@ -56,6 +56,7 @@ export default function Dashboard() {
   const [completedLoans, setCompletedLoans] = useState<any[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewLoanModal, setShowNewLoanModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -77,12 +78,18 @@ export default function Dashboard() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [loansRes, statsRes, completedRes, usersRes] = await Promise.all([
         fetch('/api/loans/active'),
         fetch('/api/dashboard/stats'),
         fetch('/api/loans/completed'),
         fetch('/api/users')
       ]);
+
+      if (!loansRes.ok || !statsRes.ok || !completedRes.ok || !usersRes.ok) {
+        throw new Error('Database connection failed or API error occurred.');
+      }
+
       const loansData = await loansRes.json();
       const statsData = await statsRes.json();
       const completedData = await completedRes.json();
@@ -94,8 +101,9 @@ export default function Dashboard() {
       setExistingUsers(Array.isArray(usersData) ? usersData : []);
 
       setLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+    } catch (err: any) {
+      console.error('Error fetching data:', err);
+      setError(err.message || 'Unknown error');
       setLoading(false);
     }
   };
@@ -182,18 +190,50 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-12">
       {/* Header */}
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">Active Loans</h1>
-          <p className="text-sm text-muted font-medium mt-1.5">Overview of current loans and gold items</p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">Dashboard Overview</h1>
+          <p className="text-sm text-muted font-medium mt-1.5 text-muted-foreground">Real-time status of your gold vault and active protocols</p>
         </div>
         <button
           onClick={() => setShowNewLoanModal(true)}
-          className="hidden md:flex items-center gap-2 gold-gradient text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+          className="w-full md:w-auto flex items-center justify-center gap-2 gold-gradient text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           <Plus size={20} />
           Create New Loan
         </button>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatsCard
+          title="Principal Out"
+          value={`₹${stats?.totalPrincipal?.toLocaleString() || '0'}`}
+          icon={<BadgeIndianRupee className="text-primary" />}
+          trend="+4.2%"
+          loading={loading}
+        />
+        <StatsCard
+          title="Active Loans"
+          value={stats?.activeLoansCount?.toString() || '0'}
+          icon={<TrendingUp className="text-emerald-500" />}
+          trend="Live"
+          loading={loading}
+        />
+        <StatsCard
+          title="Interest Yield"
+          value={`₹${stats?.totalInterest?.toLocaleString() || '0'}`}
+          icon={<TrendingUp className="text-primary" />}
+          trend="Monthly"
+          loading={loading}
+        />
+        <StatsCard
+          title="Historical"
+          value={stats?.completedLoansCount?.toString() || '0'}
+          icon={<CheckCircle className="text-primary" />}
+          trend="Settled"
+          loading={loading}
+        />
       </div>
 
       {/* Main Content Area */}
@@ -238,6 +278,16 @@ export default function Dashboard() {
               <tbody className="divide-y divide-border/50">
                 {loading ? (
                   <tr><td colSpan={7} className="p-20 text-center text-muted font-bold italic animate-pulse">Accessing Secure Records...</td></tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan={7} className="p-20 text-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <p className="text-red-500 font-bold">Failed to connect to database</p>
+                        <p className="text-xs text-muted max-w-sm">{error}</p>
+                        <button onClick={() => fetchData()} className="bg-primary text-white px-6 py-2 rounded-xl text-xs font-bold">Retry Connection</button>
+                      </div>
+                    </td>
+                  </tr>
                 ) : activeTab === 'active' ? (
                   filteredLoans.length === 0 ? (
                     <tr><td colSpan={7} className="p-20 text-center text-muted font-bold italic">No active holdings found.</td></tr>
@@ -313,6 +363,12 @@ export default function Dashboard() {
           <div className="md:hidden">
             {loading ? (
               <div className="p-10 text-center text-muted font-bold italic animate-pulse">Syncing...</div>
+            ) : error ? (
+              <div className="p-10 text-center space-y-4">
+                <p className="text-red-500 font-bold text-sm">System Link Failure</p>
+                <p className="text-[10px] text-muted">{error}</p>
+                <button onClick={() => fetchData()} className="w-full bg-primary text-white py-3 rounded-xl text-xs font-bold">Retry</button>
+              </div>
             ) : activeTab === 'active' ? (
               filteredLoans.length === 0 ? (
                 <div className="p-10 text-center text-muted font-bold italic">Empty vault.</div>
@@ -618,6 +674,29 @@ function InputField({ label, value, onChange, placeholder = '', type = 'text', r
         onChange={(e) => onChange(e.target.value)}
         required={required}
       />
+    </div>
+  );
+}
+
+function StatsCard({ title, value, icon, trend, loading }: any) {
+  return (
+    <div className="glass-card p-6 rounded-[2rem] border-border relative overflow-hidden group hover:border-primary/50 transition-all duration-500">
+      <div className="flex justify-between items-start mb-4">
+        <div className="w-12 h-12 rounded-2xl bg-muted/20 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+          {icon}
+        </div>
+        <span className={`text-[10px] font-black px-3 py-1 rounded-full border ${trend.includes('+') ? 'border-emerald-500/20 text-emerald-500 bg-emerald-500/5' : 'border-primary/20 text-primary bg-primary/5'} uppercase tracking-widest`}>
+          {trend}
+        </span>
+      </div>
+      <div>
+        <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-1">{title}</p>
+        {loading ? (
+          <div className="h-9 w-24 bg-muted animate-pulse rounded-lg"></div>
+        ) : (
+          <h3 className="text-2xl font-black text-foreground tracking-tight">{value}</h3>
+        )}
+      </div>
     </div>
   );
 }

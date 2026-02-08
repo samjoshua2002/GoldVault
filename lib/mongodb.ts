@@ -5,11 +5,17 @@ import '@/models/Loan';
 import '@/models/CompletedLoan';
 import '@/models/Payment';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/gold';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-    throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+    if (process.env.NODE_ENV === 'production') {
+        throw new Error('MONGODB_URI is missing in production environment variables');
+    }
+    // For local development, fallback but warn
+    console.warn('MONGODB_URI missing, falling back to localhost');
 }
+
+const connectionString = MONGODB_URI || 'mongodb://localhost:27017/gold';
 
 interface MongooseCache {
     conn: typeof mongoose | null;
@@ -36,7 +42,7 @@ async function dbConnect() {
             bufferCommands: false,
         };
 
-        cached!.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+        cached!.promise = mongoose.connect(connectionString, opts).then((mongoose) => {
             return mongoose;
         });
     }

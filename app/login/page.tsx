@@ -82,16 +82,16 @@ export default function LoginPage() {
                         <div className="w-20 h-20 gold-gradient rounded-3xl flex items-center justify-center text-white mb-8 mx-auto lg:mx-0 shadow-2xl shadow-primary/30 transform -rotate-1 hover:rotate-0 transition-transform duration-500">
                             <Lock size={36} />
                         </div>
-                        <h2 className="text-4xl font-bold text-slate-900 tracking-tight">Admin Access</h2>
-                        <p className="mt-3 text-slate-500 font-medium">Please sign in to manage your vault.</p>
+                        <h2 className="text-4xl font-bold text-foreground tracking-tight">Admin Access</h2>
+                        <p className="mt-3 text-muted-foreground font-medium">Please sign in to manage your vault.</p>
                     </div>
 
                     <form className="space-y-8 mt-10" onSubmit={handleSubmit}>
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <label className="block text-xs font-bold text-slate-700 ml-1 tracking-wide">Username</label>
+                                <label className="block text-xs font-bold text-muted-foreground ml-1 tracking-wide uppercase">Username</label>
                                 <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
                                         <User size={20} />
                                     </div>
                                     <input
@@ -106,9 +106,9 @@ export default function LoginPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="block text-xs font-bold text-slate-700 ml-1 tracking-wide">Password</label>
+                                <label className="block text-xs font-bold text-muted-foreground ml-1 tracking-wide uppercase">Password</label>
                                 <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
                                         <Lock size={20} />
                                     </div>
                                     <input
