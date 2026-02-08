@@ -1,4 +1,9 @@
 import mongoose from 'mongoose';
+import '@/models/User';
+import '@/models/GoldDetail';
+import '@/models/Loan';
+import '@/models/CompletedLoan';
+import '@/models/Payment';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/gold';
 

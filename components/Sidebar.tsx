@@ -14,7 +14,8 @@ import {
     Moon,
     User as UserIcon,
     Key,
-    UserCircle
+    UserCircle,
+    History
 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 
@@ -67,6 +68,7 @@ export default function Sidebar() {
     const links = [
         { name: 'Dashboard', href: '/', icon: <LayoutDashboard size={22} /> },
         { name: 'Customers', href: '/users', icon: <Users size={22} /> },
+        { name: 'Transactions', href: '/transactions', icon: <History size={22} /> },
     ];
 
     const ProfileMenu = ({ isMobile = false }) => (
@@ -74,6 +76,14 @@ export default function Sidebar() {
             <div className="p-3 border-b border-border/50 bg-muted/20">
                 <p className="text-[10px] font-bold text-muted uppercase tracking-widest px-2">Account Settings</p>
             </div>
+            {/* Theme Toggle moved here for mobile/desktop profile menu */}
+            <button
+                onClick={() => { toggleTheme(); setShowProfileMenu(false); }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-foreground hover:bg-primary/10 hover:text-primary transition-colors text-left"
+            >
+                {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+                {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+            </button>
             <button
                 onClick={() => { setIsChangingPassword(true); setShowProfileMenu(false); }}
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-foreground hover:bg-primary/10 hover:text-primary transition-colors text-left"
@@ -83,7 +93,7 @@ export default function Sidebar() {
             </button>
             <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-left border-t border-border/50"
             >
                 <LogOut size={16} />
                 Sign Out
@@ -127,23 +137,6 @@ export default function Sidebar() {
                 </nav>
 
                 <div className="p-6 space-y-6">
-                    {/* Theme Toggle Button */}
-                    <button
-                        onClick={toggleTheme}
-                        className="w-full h-14 bg-muted/20 rounded-2xl flex items-center justify-center gap-4 hover:border-primary transition-all text-xs font-bold text-foreground border-2 border-border shadow-sm"
-                    >
-                        {theme === 'light' ? (
-                            <>
-                                <Moon size={18} className="text-muted" />
-                                <span>Dark Mode</span>
-                            </>
-                        ) : (
-                            <>
-                                <Sun size={18} className="text-primary" />
-                                <span>Light Mode</span>
-                            </>
-                        )}
-                    </button>
 
                     <div className="relative">
                         {showProfileMenu && <ProfileMenu />}
@@ -187,12 +180,12 @@ export default function Sidebar() {
                     <Plus size={28} strokeWidth={2.5} className="text-white" />
                 </button>
 
-                <button
-                    onClick={toggleTheme}
-                    className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl text-muted hover:text-foreground"
+                <Link
+                    href="/transactions"
+                    className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all ${pathname === '/transactions' ? 'text-primary bg-primary/10' : 'text-muted hover:text-foreground'}`}
                 >
-                    {theme === 'light' ? <Moon size={24} /> : <Sun size={24} className="text-primary" />}
-                </button>
+                    <History size={24} strokeWidth={pathname === '/transactions' ? 2.5 : 2} />
+                </Link>
 
                 <div className="relative">
                     {showProfileMenu && <ProfileMenu isMobile />}

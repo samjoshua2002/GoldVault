@@ -87,11 +87,13 @@ export default function UsersPage() {
                         <tbody className="divide-y divide-border/50">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5} className="p-20 text-center text-muted font-bold italic animate-pulse">Synchronizing directory...</td>
+                                    <td colSpan={5} className="p-20 text-center text-muted font-bold italic animate-pulse">Loading customers...</td>
                                 </tr>
                             ) : filteredUsers.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="p-20 text-center text-muted font-bold italic">No matching records discovered.</td>
+                                    <td colSpan={5} className="p-20 text-center text-muted font-bold italic">
+                                        {filterStatus === 'active' ? 'No customers with active loans found.' : 'No matching customers found.'}
+                                    </td>
                                 </tr>
                             ) : (
                                 filteredUsers.map(user => (
@@ -135,9 +137,11 @@ export default function UsersPage() {
                 {/* Mobile Card View */}
                 <div className="md:hidden">
                     {loading ? (
-                        <div className="p-10 text-center text-muted font-bold italic animate-pulse">Syncing...</div>
+                        <div className="p-10 text-center text-muted font-bold italic animate-pulse">Loading customers...</div>
                     ) : filteredUsers.length === 0 ? (
-                        <div className="p-10 text-center text-muted font-bold italic">Directory empty.</div>
+                        <div className="p-10 text-center text-muted font-bold italic">
+                            {filterStatus === 'active' ? 'No customers with active loans found.' : 'No matching customers found.'}
+                        </div>
                     ) : (
                         <div className="divide-y divide-border/30">
                             {filteredUsers.map(user => (

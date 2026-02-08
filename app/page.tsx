@@ -92,6 +92,7 @@ export default function Dashboard() {
       setStats(statsData);
       setCompletedLoans(Array.isArray(completedData) ? completedData : []);
       setExistingUsers(Array.isArray(usersData) ? usersData : []);
+
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -195,242 +196,210 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Stats Grid */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          icon={<Coins className="text-[#D4AF37]" />}
-          title="Active Loans"
-          value={stats?.activeLoansCount || 0}
-          subtitle="Currently pledged"
-          trend="+2.5%"
-          trendUp={true}
-        />
-        <StatCard
-          icon={<CheckCircle className="text-teal-500" />}
-          title="Completed"
-          value={stats?.completedLoansCount || 0}
-          subtitle="Total finished"
-          trend="+12%"
-          trendUp={true}
-        />
-        <StatCard
-          icon={<BadgeIndianRupee className="text-blue-500" />}
-          title="Principal Out"
-          value={`₹${stats?.totalPrincipal?.toLocaleString() || 0}`}
-          subtitle="Lent amount"
-        />
-        <StatCard
-          icon={<TrendingUp className="text-green-500" />}
-          title="Earned Interest"
-          value={`₹${stats?.totalInterest?.toLocaleString() || 0}`}
-          subtitle="Accrued so far"
-          trend="+5.4%"
-          trendUp={true}
-        />
-      </div> */}
+      {/* Main Content Area */}
+      <div className="w-full space-y-8">
+        <div className="glass-card rounded-[2.5rem] border-border overflow-hidden">
+          <div className="p-8 border-b border-border flex flex-col md:flex-row justify-between items-center gap-6 bg-muted/5">
+            <div className="flex gap-2 bg-muted/20 p-2 rounded-2xl">
+              <TabButton active={activeTab === 'active'} onClick={() => setActiveTab('active')}>
+                Active Loans
+              </TabButton>
+              <TabButton active={activeTab === 'completed'} onClick={() => setActiveTab('completed')}>
+                History
+              </TabButton>
+            </div>
 
-      {/* Main Content */}
-      <div className="glass-card rounded-[2.5rem] border-border overflow-hidden">
-        <div className="p-8 border-b border-border flex flex-col md:flex-row justify-between items-center gap-6 bg-muted/5">
-          <div className="flex gap-2 bg-muted/20 p-2 rounded-2xl">
-            <TabButton active={activeTab === 'active'} onClick={() => setActiveTab('active')}>
-              Active Loans
-            </TabButton>
-            <TabButton active={activeTab === 'completed'} onClick={() => setActiveTab('completed')}>
-              History
-            </TabButton>
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={18} />
+              <input
+                type="text"
+                placeholder="Search by name, ID or phone..."
+                className="w-full bg-muted/20 border-2 border-border rounded-2xl py-3.5 pl-12 pr-6 text-sm font-bold text-foreground focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all placeholder:text-muted/40"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={18} />
-            <input
-              type="text"
-              placeholder="Search by name, ID or phone..."
-              className="w-full bg-muted/20 border-2 border-border rounded-2xl py-3.5 pl-12 pr-6 text-sm font-bold text-foreground focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all placeholder:text-muted/40"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Desktop Table View */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-muted/30 text-muted text-xs font-semibold border-b border-border">
-                <th className="p-6 pl-10">Customer Name</th>
-                <th className="p-6">Gold Item</th>
-                <th className="p-6">Loan Amount</th>
-                <th className="p-6">Interest</th>
-                <th className="p-6">Total Owed</th>
-                <th className="p-6">Date Started</th>
-                <th className="p-6 text-right pr-10">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {loading ? (
-                <tr><td colSpan={7} className="p-20 text-center text-muted font-bold italic animate-pulse">Accessing Secure Records...</td></tr>
-              ) : activeTab === 'active' ? (
-                filteredLoans.length === 0 ? (
-                  <tr><td colSpan={7} className="p-20 text-center text-muted font-bold italic">No active holdings found.</td></tr>
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-muted/30 text-muted text-xs font-semibold border-b border-border">
+                  <th className="p-6 pl-10">Customer Name</th>
+                  <th className="p-6">Gold Item</th>
+                  <th className="p-6">Loan Amount</th>
+                  <th className="p-6">Interest</th>
+                  <th className="p-6">Total Owed</th>
+                  <th className="p-6">Date Started</th>
+                  <th className="p-6 text-right pr-10">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/50">
+                {loading ? (
+                  <tr><td colSpan={7} className="p-20 text-center text-muted font-bold italic animate-pulse">Accessing Secure Records...</td></tr>
+                ) : activeTab === 'active' ? (
+                  filteredLoans.length === 0 ? (
+                    <tr><td colSpan={7} className="p-20 text-center text-muted font-bold italic">No active holdings found.</td></tr>
+                  ) : (
+                    filteredLoans.map((loan) => {
+                      const months = differenceInMonths(startOfMonth(new Date()), startOfMonth(new Date(loan.startDate)));
+                      return (
+                        <tr key={loan._id} className="hover:bg-muted/20 transition-colors group border-b border-border/50">
+                          <td className="p-6 pl-10">
+                            <div className="font-bold text-foreground text-sm">{loan.userId?.name}</div>
+                            <div className="text-xs text-muted font-medium mt-0.5">{loan.userId?.phone}</div>
+                          </td>
+                          <td className="p-6">
+                            <div className="text-sm font-semibold text-foreground/90">{loan.goldId?.category}</div>
+                            <div className="text-xs text-muted font-medium mt-0.5">{loan.goldId?.goldType} • {loan.goldId?.weight}g</div>
+                          </td>
+                          <td className="p-6 text-foreground font-bold text-sm">₹{loan.principalAmount?.toLocaleString()}</td>
+                          <td className="p-6 text-emerald-600 font-bold text-sm">
+                            + ₹{loan.currentInterest?.toLocaleString()}
+                            <div className="text-[10px] text-muted font-medium mt-0.5">
+                              {months} Month{months !== 1 ? 's' : ''}
+                            </div>
+                          </td>
+                          <td className="p-6 font-bold text-foreground text-base">₹{loan.totalAmount?.toLocaleString()}</td>
+                          <td className="p-6 text-xs font-medium text-muted">
+                            {new Date(loan.startDate).toLocaleDateString()}
+                          </td>
+                          <td className="p-6 text-right pr-10">
+                            <button
+                              onClick={() => { setSelectedLoan(loan); setShowPaymentModal(true); }}
+                              className="bg-muted/20 border-2 border-border text-foreground hover:text-white hover:bg-gold-gradient hover:border-transparent px-6 py-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
+                            >
+                              Receive Payment
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )
                 ) : (
-                  filteredLoans.map((loan) => {
-                    const months = differenceInMonths(startOfMonth(new Date()), startOfMonth(new Date(loan.startDate)));
-                    return (
-                      <tr key={loan._id} className="hover:bg-muted/20 transition-colors group border-b border-border/50">
+                  completedLoans.length === 0 ? (
+                    <tr><td colSpan={7} className="p-20 text-center text-muted font-bold italic">No historical data available.</td></tr>
+                  ) : (
+                    completedLoans.map((cl) => (
+                      <tr key={cl._id} className="hover:bg-muted/5 transition-colors opacity-80 hover:opacity-100">
                         <td className="p-6 pl-10">
-                          <div className="font-bold text-foreground text-sm">{loan.userId?.name}</div>
-                          <div className="text-xs text-muted font-medium mt-0.5">{loan.userId?.phone}</div>
+                          <div className="font-bold text-foreground text-sm uppercase tracking-tight">{cl.userId?.name || 'Customer'}</div>
+                          <div className="text-[10px] text-muted font-mono mt-1">{cl.loanId}</div>
                         </td>
                         <td className="p-6">
-                          <div className="text-sm font-semibold text-foreground/90">{loan.goldId?.category}</div>
-                          <div className="text-xs text-muted font-medium mt-0.5">{loan.goldId?.goldType} • {loan.goldId?.weight}g</div>
+                          <div className="text-xs font-bold text-foreground uppercase">{cl.goldId?.category || 'Unknown'}</div>
+                          <div className="text-[10px] text-muted font-bold mt-1 tracking-tight">{cl.goldId?.weight}g</div>
                         </td>
-                        <td className="p-6 text-foreground font-bold text-sm">₹{loan.principalAmount?.toLocaleString()}</td>
-                        <td className="p-6 text-emerald-600 font-bold text-sm">
-                          + ₹{loan.currentInterest?.toLocaleString()}
-                          <div className="text-[10px] text-muted font-medium mt-0.5">
-                            {months} Month{months !== 1 ? 's' : ''}
-                          </div>
-                        </td>
-                        <td className="p-6 font-bold text-foreground text-base">₹{loan.totalAmount?.toLocaleString()}</td>
-                        <td className="p-6 text-xs font-medium text-muted">
-                          {new Date(loan.startDate).toLocaleDateString()}
+                        <td className="p-6 text-muted font-bold text-sm">₹{cl.principalAmount?.toLocaleString()}</td>
+                        <td className="p-6 text-green-500 font-bold text-sm">₹{(cl.totalPaid - cl.principalAmount).toLocaleString()}</td>
+                        <td className="p-6 font-black text-foreground">₹{cl.totalPaid?.toLocaleString()}</td>
+                        <td className="p-6 text-[10px] font-bold text-muted uppercase">
+                          {new Date(cl.completedDate).toLocaleDateString()}
+                          <div className="text-[9px] text-primary mt-1">{cl.durationMonths} Mo Duration</div>
                         </td>
                         <td className="p-6 text-right pr-10">
-                          <button
-                            onClick={() => { setSelectedLoan(loan); setShowPaymentModal(true); }}
-                            className="bg-muted/20 border-2 border-border text-foreground hover:text-white hover:bg-gold-gradient hover:border-transparent px-6 py-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
-                          >
-                            Receive Payment
-                          </button>
+                          <span className="bg-green-500/10 text-green-500 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-green-500/20 shadow-sm">Settled</span>
                         </td>
                       </tr>
-                    );
-                  })
-                )
-              ) : (
-                completedLoans.length === 0 ? (
-                  <tr><td colSpan={7} className="p-20 text-center text-muted font-bold italic">No historical data available.</td></tr>
-                ) : (
-                  completedLoans.map((cl) => (
-                    <tr key={cl._id} className="hover:bg-muted/5 transition-colors opacity-80 hover:opacity-100">
-                      <td className="p-6 pl-10">
-                        <div className="font-bold text-foreground text-sm uppercase tracking-tight">{cl.userId?.name || 'Customer'}</div>
-                        <div className="text-[10px] text-muted font-mono mt-1">{cl.loanId}</div>
-                      </td>
-                      <td className="p-6">
-                        <div className="text-xs font-bold text-foreground uppercase">{cl.goldId?.category || 'Unknown'}</div>
-                        <div className="text-[10px] text-muted font-bold mt-1 tracking-tight">{cl.goldId?.weight}g</div>
-                      </td>
-                      <td className="p-6 text-muted font-bold text-sm">₹{cl.principalAmount?.toLocaleString()}</td>
-                      <td className="p-6 text-green-500 font-bold text-sm">₹{(cl.totalPaid - cl.principalAmount).toLocaleString()}</td>
-                      <td className="p-6 font-black text-foreground">₹{cl.totalPaid?.toLocaleString()}</td>
-                      <td className="p-6 text-[10px] font-bold text-muted uppercase">
-                        {new Date(cl.completedDate).toLocaleDateString()}
-                        <div className="text-[9px] text-primary mt-1">{cl.durationMonths} Mo Duration</div>
-                      </td>
-                      <td className="p-6 text-right pr-10">
-                        <span className="bg-green-500/10 text-green-500 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-green-500/20 shadow-sm">Settled</span>
-                      </td>
-                    </tr>
-                  ))
-                )
-              )}
-            </tbody>
-          </table>
-        </div>
+                    ))
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Mobile Card View */}
-        <div className="md:hidden">
-          {loading ? (
-            <div className="p-10 text-center text-muted font-bold italic animate-pulse">Syncing...</div>
-          ) : activeTab === 'active' ? (
-            filteredLoans.length === 0 ? (
-              <div className="p-10 text-center text-muted font-bold italic">Empty vault.</div>
+          {/* Mobile Card View */}
+          <div className="md:hidden">
+            {loading ? (
+              <div className="p-10 text-center text-muted font-bold italic animate-pulse">Syncing...</div>
+            ) : activeTab === 'active' ? (
+              filteredLoans.length === 0 ? (
+                <div className="p-10 text-center text-muted font-bold italic">Empty vault.</div>
+              ) : (
+                <div className="divide-y divide-border/30">
+                  {filteredLoans.map((loan) => {
+                    const months = differenceInMonths(startOfMonth(new Date()), startOfMonth(new Date(loan.startDate)));
+                    return (
+                      <div key={loan._id} className="p-6 space-y-5">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="font-black text-foreground uppercase tracking-tight">{loan.userId?.name}</div>
+                            <div className="text-[10px] text-muted font-mono mt-0.5">{loan.userId?.phone}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-black text-foreground text-lg">₹{loan.totalAmount?.toLocaleString()}</div>
+                            <div className="text-[9px] text-muted font-black uppercase tracking-widest">Outstanding</div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          <span className="bg-muted/10 border border-border px-3 py-1 rounded-xl text-[10px] font-black text-foreground uppercase tracking-tight">{loan.goldId?.category}</span>
+                          <span className="bg-muted/10 border border-border px-3 py-1 rounded-xl text-[10px] font-black text-muted tracking-tight">{loan.goldId?.weight}g</span>
+                          <span className="bg-primary/10 border border-primary/20 px-3 py-1 rounded-xl text-[10px] font-black text-primary uppercase tracking-tight">{months} Mo</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6 pt-5 border-t border-border/30">
+                          <div>
+                            <span className="text-[9px] text-muted font-black uppercase tracking-widest block mb-1">Capital</span>
+                            <span className="font-black text-foreground text-sm">₹{loan.principalAmount?.toLocaleString()}</span>
+                          </div>
+                          <div>
+                            <span className="text-[9px] text-muted font-black uppercase tracking-widest block mb-1">Interest</span>
+                            <span className="font-black text-green-500 text-sm">+ ₹{loan.currentInterest?.toLocaleString()}</span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => { setSelectedLoan(loan); setShowPaymentModal(true); }}
+                          className="w-full gold-gradient text-white py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-95"
+                        >
+                          Repay
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
             ) : (
-              <div className="divide-y divide-border/30">
-                {filteredLoans.map((loan) => {
-                  const months = differenceInMonths(startOfMonth(new Date()), startOfMonth(new Date(loan.startDate)));
-                  return (
-                    <div key={loan._id} className="p-6 space-y-5">
+              completedLoans.length === 0 ? (
+                <div className="p-10 text-center text-muted font-bold italic">No history.</div>
+              ) : (
+                <div className="divide-y divide-border/30">
+                  {completedLoans.map((cl) => (
+                    <div key={cl._id} className="p-6 space-y-4 opacity-80">
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className="font-black text-foreground uppercase tracking-tight">{loan.userId?.name}</div>
-                          <div className="text-[10px] text-muted font-mono mt-0.5">{loan.userId?.phone}</div>
+                          <div className="font-black text-foreground uppercase tracking-tight text-sm">{cl.userId?.name || 'Customer'}</div>
+                          <div className="text-[10px] text-muted font-mono mt-0.5">{cl.loanId}</div>
                         </div>
                         <div className="text-right">
-                          <div className="font-black text-foreground text-lg">₹{loan.totalAmount?.toLocaleString()}</div>
-                          <div className="text-[9px] text-muted font-black uppercase tracking-widest">Outstanding</div>
+                          <div className="font-black text-foreground">₹{cl.totalPaid?.toLocaleString()}</div>
+                          <div className="text-[9px] text-muted font-black uppercase tracking-widest">Paid</div>
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-2">
-                        <span className="bg-muted/10 border border-border px-3 py-1 rounded-xl text-[10px] font-black text-foreground uppercase tracking-tight">{loan.goldId?.category}</span>
-                        <span className="bg-muted/10 border border-border px-3 py-1 rounded-xl text-[10px] font-black text-muted tracking-tight">{loan.goldId?.weight}g</span>
-                        <span className="bg-primary/10 border border-primary/20 px-3 py-1 rounded-xl text-[10px] font-black text-primary uppercase tracking-tight">{months} Mo</span>
+                      <div className="flex gap-2">
+                        <span className="bg-muted/10 border border-border px-3 py-1 rounded-xl text-[9px] font-black text-muted uppercase">{cl.goldId?.category}</span>
+                        <span className="bg-muted/10 border border-border px-3 py-1 rounded-xl text-[9px] font-black text-muted">{cl.goldId?.weight}g</span>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-6 pt-5 border-t border-border/30">
-                        <div>
-                          <span className="text-[9px] text-muted font-black uppercase tracking-widest block mb-1">Capital</span>
-                          <span className="font-black text-foreground text-sm">₹{loan.principalAmount?.toLocaleString()}</span>
-                        </div>
-                        <div>
-                          <span className="text-[9px] text-muted font-black uppercase tracking-widest block mb-1">Interest</span>
-                          <span className="font-black text-green-500 text-sm">+ ₹{loan.currentInterest?.toLocaleString()}</span>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => { setSelectedLoan(loan); setShowPaymentModal(true); }}
-                        className="w-full gold-gradient text-white py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-95"
-                      >
-                        Repay
-                      </button>
-                    </div>
-                  )
-                })}
-              </div>
-            )
-          ) : (
-            completedLoans.length === 0 ? (
-              <div className="p-10 text-center text-muted font-bold italic">No history.</div>
-            ) : (
-              <div className="divide-y divide-border/30">
-                {completedLoans.map((cl) => (
-                  <div key={cl._id} className="p-6 space-y-4 opacity-80">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="font-black text-foreground uppercase tracking-tight text-sm">{cl.userId?.name || 'Customer'}</div>
-                        <div className="text-[10px] text-muted font-mono mt-0.5">{cl.loanId}</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-black text-foreground">₹{cl.totalPaid?.toLocaleString()}</div>
-                        <div className="text-[9px] text-muted font-black uppercase tracking-widest">Paid</div>
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-[10px] font-black text-muted uppercase tracking-widest">{new Date(cl.completedDate).toLocaleDateString()}</span>
+                        <span className="bg-green-500/10 text-green-500 px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest border border-green-500/20">Settled</span>
                       </div>
                     </div>
-
-                    <div className="flex gap-2">
-                      <span className="bg-muted/10 border border-border px-3 py-1 rounded-xl text-[9px] font-black text-muted uppercase">{cl.goldId?.category}</span>
-                      <span className="bg-muted/10 border border-border px-3 py-1 rounded-xl text-[9px] font-black text-muted">{cl.goldId?.weight}g</span>
-                    </div>
-
-                    <div className="flex justify-between items-center pt-2">
-                      <span className="text-[10px] font-black text-muted uppercase tracking-widest">{new Date(cl.completedDate).toLocaleDateString()}</span>
-                      <span className="bg-green-500/10 text-green-500 px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest border border-green-500/20">Settled</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )
-          )}
+                  ))}
+                </div>
+              )
+            )}
+          </div>
         </div>
       </div>
 
       {/* New Loan Modal */}
       {showNewLoanModal && (
-        <div className="fixed inset-0  backdrop-blur-xl flex items-center justify-center z-[100] p-4 animate-in fade-in duration-500">
+        <div className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-[100] p-4 animate-in fade-in duration-500">
           <div className="backdrop-blur-3xl rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-[0_32px_64px_-15px_rgba(0,0,0,0.2)] border border-white dark:border-white/10 animate-in zoom-in-95 duration-300">
             <div className="bg-white/20 dark:bg-muted/10 border-b border-white/20 dark:border-border p-8 flex justify-between items-center">
               <h2 className="text-2xl font-bold tracking-tight flex items-center gap-4 text-foreground">
@@ -514,7 +483,6 @@ export default function Dashboard() {
                       <option>22K</option>
                       <option>24K</option>
                       <option>18K</option>
-                      <option>18K</option>
                     </select>
                   </div>
                   <InputField label="Weight (grams)" type="number" value={formData.weight} onChange={(v: string) => setFormData({ ...formData, weight: v })} required placeholder="0.00" />
@@ -536,7 +504,6 @@ export default function Dashboard() {
               </div>
 
               <div className="md:col-span-2 flex justify-end gap-4 mt-8 pt-8 border-t border-border">
-
                 <button
                   type="submit"
                   className="gold-gradient text-white px-10 py-5 rounded-2xl text-sm font-bold shadow-2xl shadow-primary/30 transition-all transform hover:scale-[1.05] active:scale-95"
@@ -552,11 +519,11 @@ export default function Dashboard() {
       {/* Payment Modal */}
       {showPaymentModal && selectedLoan && (
         <div className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-[110] p-4 animate-in fade-in duration-500">
-          <div className=" backdrop-blur-3xl rounded-[3rem] w-full max-w-md overflow-hidden shadow-[0_32px_64px_-15px_rgba(0,0,0,0.2)] border border-white dark:border-white/10 animate-in zoom-in-95 duration-300">
+          <div className="backdrop-blur-3xl rounded-[3rem] w-full max-w-md overflow-hidden shadow-[0_32px_64px_-15px_rgba(0,0,0,0.2)] border border-white dark:border-white/10 animate-in zoom-in-95 duration-300">
             <div className="bg-white/20 dark:bg-muted/10 border-b border-white/20 dark:border-border p-8 flex justify-between items-center">
               <h2 className="text-2xl font-bold tracking-tight flex items-center gap-4 text-foreground">
                 <div className="w-12 h-12 rounded-2xl gold-gradient flex items-center justify-center text-white shadow-lg shadow-primary/30 rotate-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
+                  <BadgeIndianRupee size={24} />
                 </div>
                 Payment
               </h2>
@@ -619,27 +586,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-// Components
-function StatCard({ icon, title, value, subtitle, trend, trendUp }: any) {
-  return (
-    <div className="glass-card p-6 rounded-[2rem] border-border shadow-sm hover:modern-shadow transition-all group overflow-hidden">
-      <div className="flex justify-between items-start mb-4">
-        <div className="p-3 bg-primary/5 rounded-2xl text-primary border border-primary/10 group-hover:bg-primary group-hover:text-white transition-all duration-300">{icon}</div>
-        {trend && (
-          <span className={`text-xs font-bold px-2 py-1 rounded-full ${trendUp ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-            {trend}
-          </span>
-        )}
-      </div>
-      <div>
-        <h4 className="text-2xl font-bold text-slate-800 mb-1">{value}</h4>
-        <p className="text-sm font-medium text-slate-500 mb-0.5">{title}</p>
-        <p className="text-xs text-slate-400">{subtitle}</p>
-      </div>
     </div>
   );
 }

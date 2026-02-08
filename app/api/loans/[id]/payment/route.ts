@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Loan from '@/models/Loan';
+import Payment from '@/models/Payment';
 import { completeLoan } from '@/lib/interest';
 
 export async function POST(
@@ -29,6 +30,14 @@ export async function POST(
 
         loan.amountPaid += amount;
         loan.totalAmount -= amount;
+
+        // Create payment history record
+        await Payment.create({
+            loanId: loan._id,
+            amount: amount,
+            remainingAmount: loan.totalAmount,
+            paymentDate: new Date(),
+        });
 
         if (loan.totalAmount <= 0) {
             loan.totalAmount = 0; // Ensure it doesn't go below zero

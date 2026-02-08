@@ -4,6 +4,10 @@ import User from '@/models/User';
 import Loan from '@/models/Loan';
 import GoldDetail from '@/models/GoldDetail';
 import CompletedLoan from '@/models/CompletedLoan';
+import Payment from '@/models/Payment';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(
     request: Request,
@@ -23,11 +27,22 @@ export async function GET(
         const completedLoans = await CompletedLoan.find({ userId: id }).populate('goldId').sort({ completedDate: -1 });
         const goldItems = await GoldDetail.find({ userId: id }).sort({ date: -1 });
 
+        // Get all loan IDs (active and completed) to fetch payments
+        const loanIds = [
+            ...activeLoans.map(l => l._id),
+            ...completedLoans.map(cl => cl.loanId) // Mapping correctly if needed
+        ];
+
+        const payments = await Payment.find({ loanId: { $in: loanIds } })
+            .sort({ paymentDate: -1 })
+            .populate('loanId');
+
         return NextResponse.json({
             user,
             activeLoans,
             completedLoans,
-            goldItems
+            goldItems,
+            payments
         });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });

@@ -4,6 +4,9 @@ import CompletedLoan from '@/models/CompletedLoan';
 import User from '@/models/User';
 import GoldDetail from '@/models/GoldDetail';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
     try {
         await dbConnect();

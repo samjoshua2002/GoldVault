@@ -3,6 +3,9 @@ import dbConnect from '@/lib/mongodb';
 import Loan from '@/models/Loan';
 import CompletedLoan from '@/models/CompletedLoan';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
     try {
         await dbConnect();

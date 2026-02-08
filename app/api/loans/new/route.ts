@@ -26,9 +26,17 @@ export async function POST(request: Request) {
             // If user doesn't exist, create new one
             user = await User.create({ name: userName, phone, address });
         } else {
-            // If user exists, we can optionally update their address if provided and different
+            // If user exists, update their name and address if provided and different
+            let shouldSave = false;
+            if (userName && user.name !== userName) {
+                user.name = userName;
+                shouldSave = true;
+            }
             if (address && user.address !== address) {
                 user.address = address;
+                shouldSave = true;
+            }
+            if (shouldSave) {
                 await user.save();
             }
         }

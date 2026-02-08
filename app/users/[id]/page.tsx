@@ -12,7 +12,7 @@ export default function UserDetailPage() {
     const { id } = useParams();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
+    const [activeTab, setActiveTab] = useState<'active' | 'history' | 'payments'>('active');
 
     // Payment State
     const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -106,49 +106,49 @@ export default function UserDetailPage() {
             </div>
 
             {/* Profile Matrix */}
-            <div className="glass-card p-10 rounded-[3rem] border-border flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 bg-muted/5 relative overflow-hidden">
+            <div className="glass-card p-6 sm:p-10 rounded-[2.5rem] sm:rounded-[3rem] border-border flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 sm:gap-10 bg-muted/5 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px] -mr-48 -mt-48"></div>
 
-                <div className="flex items-center gap-8 w-full lg:w-auto relative z-10">
-                    <div className="w-24 h-24 rounded-[2.2rem] gold-gradient flex items-center justify-center text-white font-black text-4xl shadow-2xl shadow-primary/30 border-2 border-white/20 shrink-0 rotate-3">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-6 sm:gap-8 w-full lg:w-auto relative z-10">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[1.8rem] sm:rounded-[2.2rem] gold-gradient flex items-center justify-center text-white font-black text-3xl sm:text-4xl shadow-2xl shadow-primary/30 border-2 border-white/20 shrink-0 rotate-3">
                         {user.name.charAt(0).toUpperCase()}
                     </div>
 
                     {isEditingUser ? (
-                        <div className="space-y-4 w-full max-w-lg">
+                        <div className="space-y-4 w-full max-w-lg text-center sm:text-left">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <input value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} className="bg-background/50 border-2 border-border p-4 rounded-2xl text-foreground text-sm font-black w-full outline-none focus:ring-8 focus:ring-primary/5 focus:border-primary transition-all uppercase placeholder:text-muted/30" placeholder="Identity Name" />
                                 <input value={editForm.phone} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} className="bg-background/50 border-2 border-border p-4 rounded-2xl text-foreground text-sm font-black w-full outline-none focus:ring-8 focus:ring-primary/5 focus:border-primary transition-all placeholder:text-muted/30" placeholder="Contact String" />
                             </div>
                             <input value={editForm.address} onChange={e => setEditForm({ ...editForm, address: e.target.value })} className="bg-background/50 border-2 border-border p-4 rounded-2xl text-foreground text-sm font-black w-full outline-none focus:ring-8 focus:ring-primary/5 focus:border-primary transition-all placeholder:text-muted/30" placeholder="Geographic Base" />
-                            <div className="flex gap-4 pt-2">
-                                <button onClick={handleUpdateUser} className="gold-gradient text-white text-[10px] px-8 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-primary/20 hover:scale-105 transition-all"><Save size={14} /> Commit Update</button>
-                                <button onClick={() => setIsEditingUser(false)} className="bg-muted text-foreground text-[10px] px-8 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center gap-3 hover:bg-muted hover:scale-105 transition-all"><X size={14} /> Abort</button>
+                            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                                <button onClick={handleUpdateUser} className="gold-gradient text-white text-[10px] px-8 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-xl shadow-primary/20 hover:scale-105 transition-all"><Save size={14} /> Commit Update</button>
+                                <button onClick={() => setIsEditingUser(false)} className="bg-muted text-foreground text-[10px] px-8 py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-muted hover:scale-105 transition-all"><X size={14} /> Abort</button>
                             </div>
                         </div>
                     ) : (
-                        <div>
-                            <div className="flex items-center gap-4">
-                                <h1 className="text-3xl font-black text-foreground uppercase tracking-tight">{user.name}</h1>
+                        <div className="text-center sm:text-left">
+                            <div className="flex items-center justify-center sm:justify-start gap-4">
+                                <h1 className="text-2xl sm:text-3xl font-black text-foreground uppercase tracking-tight">{user.name}</h1>
                                 <button onClick={() => setIsEditingUser(true)} className="text-muted hover:text-primary transition-all p-2 bg-muted/30 hover:bg-primary/10 rounded-xl"><Edit2 size={16} /></button>
                             </div>
                             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-muted text-sm mt-3">
-                                <span className="flex items-center gap-2 font-black text-xs uppercase tracking-widest"><Phone size={14} className="text-primary" /> {user.phone}</span>
+                                <span className="flex items-center justify-center sm:justify-start gap-2 font-black text-[10px] sm:text-xs uppercase tracking-widest"><Phone size={14} className="text-primary" /> {user.phone}</span>
                                 <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-border"></div>
-                                <span className="flex items-center gap-2 text-xs font-bold italic opacity-60"><MapPin size={14} className="text-primary" /> {user.address}</span>
+                                <span className="flex items-center justify-center sm:justify-start gap-2 text-[10px] sm:text-xs font-bold italic opacity-60"><MapPin size={14} className="text-primary" /> {user.address}</span>
                             </div>
                         </div>
                     )}
                 </div>
 
-                <div className="flex gap-12 w-full lg:w-auto border-t lg:border-t-0 lg:border-l border-border/50 pt-8 lg:pt-0 lg:pl-12 relative z-10">
-                    <div>
-                        <p className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-2 px-1">Holding Volume</p>
-                        <p className="text-3xl font-black text-foreground">{goldItems.reduce((sum: number, item: any) => sum + item.weight, 0)}<span className="text-xs text-primary ml-1 uppercase font-black">g.</span></p>
+                <div className="flex justify-around sm:justify-center lg:justify-start gap-8 sm:gap-12 w-full lg:w-auto border-t lg:border-t-0 lg:border-l border-border/50 pt-8 lg:pt-0 lg:pl-12 relative z-10">
+                    <div className="text-center lg:text-left">
+                        <p className="text-[9px] sm:text-[10px] font-black text-muted uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-2 px-1">Holding Volume</p>
+                        <p className="text-2xl sm:text-3xl font-black text-foreground">{goldItems.reduce((sum: number, item: any) => sum + item.weight, 0)}<span className="text-xs text-primary ml-1 uppercase font-black">g.</span></p>
                     </div>
-                    <div>
-                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2 px-1">Target Dues</p>
-                        <p className="text-3xl font-black text-red-500">₹{activeLoans?.reduce((sum: number, loan: any) => sum + loan.totalAmount, 0).toLocaleString()}</p>
+                    <div className="text-center lg:text-left">
+                        <p className="text-[9px] sm:text-[10px] font-black text-primary uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-2 px-1">Target Dues</p>
+                        <p className="text-2xl sm:text-3xl font-black text-red-500">₹{activeLoans?.reduce((sum: number, loan: any) => sum + loan.totalAmount, 0).toLocaleString()}</p>
                     </div>
                 </div>
             </div>
@@ -158,18 +158,24 @@ export default function UserDetailPage() {
                 <div className="lg:col-span-2 space-y-8">
                     <div className="glass-card rounded-[3rem] border-border overflow-hidden">
                         {/* Status Nav */}
-                        <div className="border-b border-border px-10 py-2 flex gap-10 bg-muted/5">
+                        <div className="border-b border-border px-4 sm:px-10 py-2 flex gap-4 sm:gap-10 bg-muted/5 overflow-x-auto no-scrollbar">
                             <button
                                 onClick={() => setActiveTab('active')}
-                                className={`py-6 text-xs font-black uppercase tracking-[0.2em] transition-all border-b-4 ${activeTab === 'active' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-foreground'}`}
+                                className={`py-4 sm:py-6 text-[9px] sm:text-xs font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all border-b-4 whitespace-nowrap ${activeTab === 'active' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-foreground'}`}
                             >
-                                Active Protocols <span className="ml-2 opacity-40">[{activeLoans.length}]</span>
+                                Active Protocols <span className="ml-1 sm:ml-2 opacity-40">[{activeLoans?.length || 0}]</span>
                             </button>
                             <button
                                 onClick={() => setActiveTab('history')}
-                                className={`py-6 text-xs font-black uppercase tracking-[0.2em] transition-all border-b-4 ${activeTab === 'history' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-foreground'}`}
+                                className={`py-4 sm:py-6 text-[9px] sm:text-xs font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all border-b-4 whitespace-nowrap ${activeTab === 'history' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-foreground'}`}
                             >
-                                Legacy History <span className="ml-2 opacity-40">[{completedLoans.length}]</span>
+                                Legacy History <span className="ml-1 sm:ml-2 opacity-40">[{completedLoans?.length || 0}]</span>
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('payments')}
+                                className={`py-4 sm:py-6 text-[9px] sm:text-xs font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all border-b-4 whitespace-nowrap ${activeTab === 'payments' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-foreground'}`}
+                            >
+                                Transaction Ledger <span className="ml-1 sm:ml-2 opacity-40">[{data.payments?.length || 0}]</span>
                             </button>
                         </div>
 
@@ -229,7 +235,7 @@ export default function UserDetailPage() {
                                         ))
                                     )}
                                 </div>
-                            ) : (
+                            ) : activeTab === 'history' ? (
                                 <div className="divide-y divide-border/30">
                                     {completedLoans.length === 0 ? (
                                         <div className="p-20 text-center text-muted font-black uppercase tracking-widest text-[10px] italic">No legacy data processed for this identity.</div>
@@ -246,6 +252,28 @@ export default function UserDetailPage() {
                                                 <div className="text-left sm:text-right w-full sm:w-auto flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end gap-2">
                                                     <p className="font-black text-xs text-foreground uppercase tracking-widest">{new Date(loan.completedDate).toLocaleDateString()}</p>
                                                     <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">{loan.durationMonths} Cycle Duration</p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-border/30">
+                                    {(!data.payments || data.payments.length === 0) ? (
+                                        <div className="p-20 text-center text-muted font-black uppercase tracking-widest text-[10px] italic">No transaction records detected.</div>
+                                    ) : (
+                                        data.payments.map((payment: any) => (
+                                            <div key={payment._id} className="p-8 flex justify-between items-center hover:bg-muted/10 transition-colors">
+                                                <div>
+                                                    <div className="flex items-center gap-3 mb-1">
+                                                        <span className="text-[9px] font-black text-primary uppercase tracking-widest">Ref: {payment.loanId?.loanId || 'N/A'}</span>
+                                                        <span className="text-[9px] font-black text-muted/50 uppercase tracking-widest">{new Date(payment.paymentDate).toLocaleTimeString()}</span>
+                                                    </div>
+                                                    <p className="font-black text-sm text-foreground uppercase tracking-tight">{new Date(payment.paymentDate).toLocaleDateString()}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="font-black text-lg text-emerald-500">₹{payment.amount.toLocaleString()}</p>
+                                                    <p className="text-[9px] font-black text-muted uppercase tracking-widest">Remaining: ₹{payment.remainingAmount.toLocaleString()}</p>
                                                 </div>
                                             </div>
                                         ))
@@ -269,7 +297,7 @@ export default function UserDetailPage() {
                                 <p className="text-center text-muted font-black uppercase tracking-widest text-[9px] py-20 opacity-40 italic">No assets registered.</p>
                             ) : (
                                 goldItems.map((item: any) => (
-                                    <div key={item._id} className="bg-muted/20 rounded-[1.8rem] p-6 border-2 border-border shadow-sm flex justify-between items-center group hover:border-primary/50 transition-all duration-500">
+                                    <div key={item._id} className=" rounded-[1.8rem] p-6 border-2 border-border shadow-sm flex justify-between items-center group hover:border-primary/50 transition-all duration-500">
                                         <div>
                                             <h4 className="font-black text-foreground text-xs uppercase tracking-widest">{item.category}</h4>
                                             <p className="text-[9px] font-black text-muted mt-2 uppercase tracking-tighter opacity-60">{new Date(item.date).toLocaleDateString()}</p>
