@@ -69,3 +69,42 @@ export async function PUT(
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
+export async function DELETE(
+    request: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    try {
+        const { id } = await params;
+        await dbConnect();
+
+        // 1. Find all loans to get their IDs
+        const activeLoans = await Loan.find({ userId: id });
+        const completedLoans = await CompletedLoan.find({ userId: id });
+
+        const loanIds = [
+            ...activeLoans.map(l => l._id),
+            ...(completedLoans.map(cl => {
+                try {
+                    // Some historical records might have stored loanId as a string or ObjectId
+                    return cl.loanId;
+                } catch (e) {
+                    return null;
+                }
+            }).filter(id => id !== null))
+        ];
+
+        // 2. Cascade Delete
+        await Promise.all([
+            Payment.deleteMany({ loanId: { $in: loanIds } }),
+            Loan.deleteMany({ userId: id }),
+            CompletedLoan.deleteMany({ userId: id }),
+            GoldDetail.deleteMany({ userId: id }),
+            User.findByIdAndDelete(id)
+        ]);
+
+        return NextResponse.json({ success: true, message: 'User and all associated data deleted successfully' });
+    } catch (error: any) {
+        console.error('Delete User Error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
