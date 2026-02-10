@@ -9,7 +9,8 @@ import {
   TrendingUp,
   Plus,
   Search,
-  BadgeIndianRupee
+  BadgeIndianRupee,
+  ArrowUpRight
 } from 'lucide-react';
 import { differenceInMonths, startOfMonth } from 'date-fns';
 
@@ -23,6 +24,7 @@ interface Loan {
   status: string;
   startDate: string;
   userId: {
+    _id: string;
     name: string;
     phone: string;
     address: string;
@@ -265,10 +267,24 @@ export default function Dashboard() {
                     filteredLoans.map((loan) => {
                       const months = differenceInMonths(startOfMonth(new Date()), startOfMonth(new Date(loan.startDate)));
                       return (
-                        <tr key={loan._id} className="hover:bg-muted/20 transition-colors group border-b border-border/50">
+                        <tr
+                          key={loan._id}
+                          className="hover:bg-muted/20 transition-all group border-b border-border/50 cursor-pointer relative"
+                          onClick={() => router.push(`/users/${loan.userId?._id}`)}
+                        >
                           <td className="p-6 pl-10">
-                            <div className="font-bold text-foreground text-sm">{loan.userId?.name}</div>
-                            <div className="text-xs text-muted font-medium mt-0.5">{loan.userId?.phone}</div>
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center text-white font-black text-xs shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                                {loan.userId?.name?.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <div className="font-bold text-foreground text-sm flex items-center gap-2">
+                                  {loan.userId?.name}
+                                  <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
+                                </div>
+                                <div className="text-xs text-muted font-medium mt-0.5">{loan.userId?.phone}</div>
+                              </div>
+                            </div>
                           </td>
                           <td className="p-6">
                             <div className="text-sm font-semibold text-foreground/90">{loan.goldId?.category}</div>
@@ -287,8 +303,12 @@ export default function Dashboard() {
                           </td>
                           <td className="p-6 text-right pr-10">
                             <button
-                              onClick={() => { setSelectedLoan(loan); setShowPaymentModal(true); }}
-                              className="bg-muted/20 border-2 border-border text-foreground hover:text-white hover:bg-gold-gradient hover:border-transparent px-6 py-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedLoan(loan);
+                                setShowPaymentModal(true);
+                              }}
+                              className="bg-muted/20 border-2 border-border text-foreground hover:text-white hover:bg-gold-gradient hover:border-transparent px-6 py-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 relative z-10"
                             >
                               Receive Payment
                             </button>
@@ -302,10 +322,24 @@ export default function Dashboard() {
                     <tr><td colSpan={7} className="p-20 text-center text-muted font-bold italic">No historical data available.</td></tr>
                   ) : (
                     completedLoans.map((cl) => (
-                      <tr key={cl._id} className="hover:bg-muted/5 transition-colors opacity-80 hover:opacity-100">
+                      <tr
+                        key={cl._id}
+                        className="hover:bg-muted/5 transition-all opacity-80 hover:opacity-100 cursor-pointer group"
+                        onClick={() => router.push(`/users/${cl.userId?._id}`)}
+                      >
                         <td className="p-6 pl-10">
-                          <div className="font-bold text-foreground text-sm uppercase tracking-tight">{cl.userId?.name || 'Customer'}</div>
-                          <div className="text-[10px] text-muted font-mono mt-1">{cl.loanId}</div>
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-muted/20 flex items-center justify-center text-muted font-black text-xs group-hover:bg-primary/20 group-hover:text-primary transition-all">
+                              {cl.userId?.name?.charAt(0).toUpperCase() || 'C'}
+                            </div>
+                            <div>
+                              <div className="font-bold text-foreground text-sm uppercase tracking-tight flex items-center gap-2">
+                                {cl.userId?.name || 'Customer'}
+                                <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
+                              </div>
+                              <div className="text-[10px] text-muted font-mono mt-1">{cl.loanId}</div>
+                            </div>
+                          </div>
                         </td>
                         <td className="p-6">
                           <div className="text-xs font-bold text-foreground uppercase">{cl.goldId?.category || 'Unknown'}</div>
@@ -347,11 +381,23 @@ export default function Dashboard() {
                   {filteredLoans.map((loan) => {
                     const months = differenceInMonths(startOfMonth(new Date()), startOfMonth(new Date(loan.startDate)));
                     return (
-                      <div key={loan._id} className="p-6 space-y-5">
+                      <div
+                        key={loan._id}
+                        className="p-6 space-y-5 hover:bg-muted/10 transition-colors cursor-pointer"
+                        onClick={() => router.push(`/users/${loan.userId?._id}`)}
+                      >
                         <div className="flex justify-between items-start">
-                          <div>
-                            <div className="font-black text-foreground uppercase tracking-tight">{loan.userId?.name}</div>
-                            <div className="text-[10px] text-muted font-mono mt-0.5">{loan.userId?.phone}</div>
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl gold-gradient flex items-center justify-center text-white font-black shadow-lg">
+                              {loan.userId?.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <div className="font-black text-foreground uppercase tracking-tight flex items-center gap-2">
+                                {loan.userId?.name}
+                                <ArrowUpRight size={14} className="text-primary" />
+                              </div>
+                              <div className="text-[10px] text-muted font-mono mt-0.5">{loan.userId?.phone}</div>
+                            </div>
                           </div>
                           <div className="text-right">
                             <div className="font-black text-foreground text-lg">₹{loan.totalAmount?.toLocaleString()}</div>
@@ -377,8 +423,12 @@ export default function Dashboard() {
                         </div>
 
                         <button
-                          onClick={() => { setSelectedLoan(loan); setShowPaymentModal(true); }}
-                          className="w-full gold-gradient text-white py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-95"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedLoan(loan);
+                            setShowPaymentModal(true);
+                          }}
+                          className="w-full gold-gradient text-white py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-95 relative z-10"
                         >
                           Repay
                         </button>
@@ -393,11 +443,23 @@ export default function Dashboard() {
               ) : (
                 <div className="divide-y divide-border/30">
                   {completedLoans.map((cl) => (
-                    <div key={cl._id} className="p-6 space-y-4 opacity-80">
+                    <div
+                      key={cl._id}
+                      className="p-6 space-y-4 opacity-80 hover:opacity-100 hover:bg-muted/5 transition-all cursor-pointer"
+                      onClick={() => router.push(`/users/${cl.userId?._id}`)}
+                    >
                       <div className="flex justify-between items-start">
-                        <div>
-                          <div className="font-black text-foreground uppercase tracking-tight text-sm">{cl.userId?.name || 'Customer'}</div>
-                          <div className="text-[10px] text-muted font-mono mt-0.5">{cl.loanId}</div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-muted/20 flex items-center justify-center text-muted font-black">
+                            {cl.userId?.name?.charAt(0).toUpperCase() || 'C'}
+                          </div>
+                          <div>
+                            <div className="font-black text-foreground uppercase tracking-tight text-sm flex items-center gap-2">
+                              {cl.userId?.name || 'Customer'}
+                              <ArrowUpRight size={12} className="text-primary" />
+                            </div>
+                            <div className="text-[10px] text-muted font-mono mt-0.5">{cl.loanId}</div>
+                          </div>
                         </div>
                         <div className="text-right">
                           <div className="font-black text-foreground">₹{cl.totalPaid?.toLocaleString()}</div>
@@ -525,7 +587,7 @@ export default function Dashboard() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
                   <p className="text-[11px] text-primary font-bold uppercase tracking-widest">Interest Calculation</p>
                   <p className="text-sm text-white font-mono italic">GENERATING REFERENCE...</p>
-                  <p className="text-[10px] text-white/60 font-medium leading-relaxed">Monthly interest is 1% based on the loan amount.</p>
+                  <p className="text-[10px] text-white/60 font-medium leading-relaxed">Monthly interest is 2% based on the loan amount.</p>
                 </div>
               </div>
 

@@ -20,7 +20,10 @@ export async function GET(request: Request) {
             .limit(limit)
             .populate({
                 path: 'loanId',
-                populate: { path: 'userId' }
+                populate: [
+                    { path: 'userId' },
+                    { path: 'goldId' }
+                ]
             });
 
         return NextResponse.json(payments);

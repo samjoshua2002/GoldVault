@@ -27,15 +27,16 @@ export async function GET(
         const completedLoans = await CompletedLoan.find({ userId: id }).populate('goldId').sort({ completedDate: -1 });
         const goldItems = await GoldDetail.find({ userId: id }).sort({ date: -1 });
 
-        // Get all loan IDs (active and completed) to fetch payments
-        const loanIds = [
-            ...activeLoans.map(l => l._id),
-            ...completedLoans.map(cl => cl.loanId) // Mapping correctly if needed
-        ];
+        // Get all loans (active and completed) to fetch their ObjectIds
+        const allLoans = await Loan.find({ userId: id });
+        const loanIds = allLoans.map(l => l._id);
 
         const payments = await Payment.find({ loanId: { $in: loanIds } })
             .sort({ paymentDate: -1 })
-            .populate('loanId');
+            .populate({
+                path: 'loanId',
+                populate: { path: 'goldId' }
+            });
 
         return NextResponse.json({
             user,
@@ -81,17 +82,7 @@ export async function DELETE(
         const activeLoans = await Loan.find({ userId: id });
         const completedLoans = await CompletedLoan.find({ userId: id });
 
-        const loanIds = [
-            ...activeLoans.map(l => l._id),
-            ...(completedLoans.map(cl => {
-                try {
-                    // Some historical records might have stored loanId as a string or ObjectId
-                    return cl.loanId;
-                } catch (e) {
-                    return null;
-                }
-            }).filter(id => id !== null))
-        ];
+        const loanIds = activeLoans.map(l => l._id);
 
         // 2. Cascade Delete
         await Promise.all([

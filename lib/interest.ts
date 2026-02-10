@@ -71,6 +71,7 @@ export async function completeLoan(loan: ILoan, reason: 'repaid' | 'expired') {
         goldId: loan.goldId,
         principalAmount: loan.principalAmount,
         totalPaid: loan.amountPaid,
+        startDate: loan.startDate,
         completedDate: new Date(),
         durationMonths,
     });

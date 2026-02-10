@@ -14,6 +14,9 @@ interface Transaction {
             name: string;
             phone: string;
         };
+        goldId?: {
+            goldId: string;
+        };
     };
 }
 
@@ -42,7 +45,7 @@ export default function TransactionsPage() {
 
     const filteredTransactions = transactions.filter(t =>
         t.loanId?.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.loanId?.loanId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        t.loanId?.goldId?.goldId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         t.loanId?.userId?.phone?.includes(searchTerm)
     );
 
@@ -83,7 +86,7 @@ export default function TransactionsPage() {
                             <tr className="bg-muted/30 text-muted text-[10px] font-black uppercase tracking-widest border-b border-border">
                                 <th className="p-6 pl-10">Timestamp</th>
                                 <th className="p-6">Customer</th>
-                                <th className="p-6">Protocol ID</th>
+                                <th className="p-6">Gold ID</th>
                                 <th className="p-6">Transaction</th>
                                 <th className="p-6 text-right pr-10">Balance Remaining</th>
                             </tr>
@@ -114,8 +117,8 @@ export default function TransactionsPage() {
                                             <div className="text-[10px] text-muted font-mono">{t.loanId?.userId?.phone}</div>
                                         </td>
                                         <td className="p-6">
-                                            <span className="text-[10px] font-mono font-black bg-muted/30 px-3 py-1.5 rounded-xl border border-border uppercase">
-                                                {t.loanId?.loanId}
+                                            <span className="text-[10px] font-mono font-black bg-muted/30 px-3 py-1.5 rounded-xl border border-border uppercase text-primary">
+                                                {t.loanId?.goldId?.goldId || t.loanId?.loanId}
                                             </span>
                                         </td>
                                         <td className="p-6">
@@ -164,8 +167,8 @@ export default function TransactionsPage() {
 
                                     <div className="flex justify-between items-center bg-muted/20 p-4 rounded-2xl border border-border/50">
                                         <div>
-                                            <span className="text-[9px] text-muted font-black uppercase tracking-widest block mb-1">Protocol ID</span>
-                                            <span className="font-mono text-[10px] font-black text-foreground">{t.loanId?.loanId}</span>
+                                            <span className="text-[9px] text-muted font-black uppercase tracking-widest block mb-1">Gold ID</span>
+                                            <span className="font-mono text-[10px] font-black text-primary">{t.loanId?.goldId?.goldId || t.loanId?.loanId}</span>
                                         </div>
                                         <div className="text-right">
                                             <span className="text-[9px] text-muted font-black uppercase tracking-widest block mb-1">Date</span>

@@ -6,6 +6,7 @@ export interface ICompletedLoan extends Document {
     goldId: mongoose.Types.ObjectId;
     principalAmount: number;
     totalPaid: number;
+    startDate: Date;
     completedDate: Date;
     durationMonths: number;
 }
@@ -16,6 +17,7 @@ const CompletedLoanSchema: Schema = new Schema({
     goldId: { type: Schema.Types.ObjectId, ref: 'GoldDetail', required: true },
     principalAmount: { type: Number, required: true },
     totalPaid: { type: Number, required: true },
+    startDate: { type: Date, required: true },
     completedDate: { type: Date, default: Date.now },
     durationMonths: { type: Number, required: true },
 });
